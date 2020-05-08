@@ -10,7 +10,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/tokopedia/gripmock/stub"
+	"github.com/phoe3nix/gripmock/stub"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		if os.Getenv("GOPATH") == "" {
 			log.Fatal("output is not provided and GOPATH is empty")
 		}
-		output = os.Getenv("GOPATH") + "/src/grpc"
+		output = os.Getenv("GOPATH") + "/src"
 	}
 
 	// for safety
@@ -60,7 +60,7 @@ func main() {
 	importDirs := strings.Split(*imports, ",")
 
 	// generate pb.go and grpc server based on proto
-	generateProtoc(protocParam{
+	generateProtoc(output, protocParam{
 		protoPath:   protoPaths,
 		adminPort:   *adminport,
 		grpcAddress: *grpcBindAddr,
@@ -101,7 +101,7 @@ type protocParam struct {
 	imports     []string
 }
 
-func generateProtoc(param protocParam) {
+func generateProtoc(output string, param protocParam) {
 	protodirs := strings.Split(param.protoPath[0], "/")
 	protodir := ""
 	if len(protodirs) > 0 {
@@ -128,6 +128,33 @@ func generateProtoc(param protocParam) {
 	// change package to "main" on generated code
 	for _, proto := range param.protoPath {
 		protoname := getProtoName(proto)
+		
+		file := strings.Split(proto, "/")
+		newFile := make([]string, len(file) + 1)
+		for i, s := range file {
+			if i == 1 {
+			  newFile[i] = "go"
+			  continue
+			}
+			if i == 0 {
+			  continue
+			}
+			if i == 2 {
+			  newFile[i] = "src"
+			  newFile[i+1] = s
+			  continue
+			}
+			newFile[i+1] = s
+		}
+
+		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
+		newPath := strings.Join(newFile[:], "/")
+		comArgs := []string{newPath}
+		comArgs = append(comArgs, output)
+		copyCom := exec.Command("cp", comArgs...)
+		copyCom.Stdout = os.Stdout
+		copyCom.Stderr = os.Stderr
+		copyCom.Run()
 		sed := exec.Command("sed", "-i", `s/^package \w*$/package main/`, param.output+protoname+".pb.go")
 		sed.Stderr = os.Stderr
 		sed.Stdout = os.Stdout

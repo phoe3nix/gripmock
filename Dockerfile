@@ -16,7 +16,8 @@ RUN go get -u -v github.com/golang/protobuf/protoc-gen-go \
 	golang.org/x/tools/imports
 
 RUN go get -u -v github.com/gobuffalo/packr/v2/... \
-                 github.com/gobuffalo/packr/v2/packr2
+                 github.com/gobuffalo/packr/v2/packr2 \
+		 github.com/phoe3nix/gripmock
 
 # cloning well-known-types
 RUN git clone https://github.com/google/protobuf.git /protobuf-repo
@@ -28,23 +29,27 @@ RUN mv /protobuf-repo/src/ /protobuf/
 
 RUN rm -rf /protobuf-repo
 
-RUN mkdir -p /go/src/github.com/tokopedia/gripmock
+RUN mkdir -p /go/src/github.com/phoe3nix/gripmock
 
-COPY . /go/src/github.com/tokopedia/gripmock
+COPY . /go/src/github.com/phoe3nix/gripmock
 
-WORKDIR /go/src/github.com/tokopedia/gripmock/protoc-gen-gripmock
+WORKDIR /go/src/github.com/phoe3nix/gripmock/protoc-gen-gripmock
 
-RUN packr2
+RUN cd $GOPATH && packr2
 
 # install generator plugin
 RUN go install -v
 
 RUN packr2 clean
 
-WORKDIR /go/src/github.com/tokopedia/gripmock
+WORKDIR /go/src/github.com/phoe3nix/gripmock
 
 # install gripmock
 RUN go install -v
+
+#WORKDIR /go/src/github.com/phoe3nix/gripmock
+
+#ENV GOPATH=/go/src/grpc
 
 EXPOSE 4770 4771
 
