@@ -188,7 +188,7 @@ func generateProtoc(output string, param protocParam) []string {
     	if err != nil {
         	return err
     	}
-    	fmt.Println(path, info.Size())
+    	// fmt.Println(path, info.Size())
     	return nil
 	})
 	if err != nil {
@@ -220,10 +220,9 @@ func delete_fisrt (s []string) []string {
 
 func buildServer(output string, protoPaths []string) {
 	args := []string{"build", "-o", output + "grpcserver", output + "server.go"}
-	// for _, path := range protoPaths {
-	// 	args = append(args, path)
-	// }
-	args = append(args, "go/src/auth_flow.pb.go")
+	for _, path := range protoPaths {
+		args = append(args, path)
+	}
 	build := exec.Command("go", args...)
 	build.Stdout = os.Stdout
 	build.Stderr = os.Stderr
