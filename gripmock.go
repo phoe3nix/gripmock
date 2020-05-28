@@ -60,7 +60,7 @@ func main() {
 	importDirs := strings.Split(*imports, ",")
 
 	// generate pb.go and grpc server based on proto
-	generateProtoc(output, protocParam{
+	paths := generateProtoc(output, protocParam{
 		protoPath:   protoPaths,
 		adminPort:   *adminport,
 		grpcAddress: *grpcBindAddr,
@@ -70,7 +70,7 @@ func main() {
 	})
 
 	// build the server
-	buildServer(output, protoPaths)
+	buildServer(output, paths)
 
 	// and run
 	run, runerr := runGrpcServer(output)
@@ -101,7 +101,7 @@ type protocParam struct {
 	imports     []string
 }
 
-func generateProtoc(output string, param protocParam) {
+func generateProtoc(output string, param protocParam) []string {
 	protodirs := strings.Split(param.protoPath[0], "/")
 	protodir := ""
 	if len(protodirs) > 0 {
@@ -124,6 +124,8 @@ func generateProtoc(output string, param protocParam) {
 	if err != nil {
 		log.Fatal("Fail on protoc ", err)
 	}
+
+	paths := []string{"/go/src/auth_flow_service"}
 
 	// change package to "main" on generated code
 	for _, proto := range param.protoPath {
@@ -150,8 +152,7 @@ func generateProtoc(output string, param protocParam) {
 		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
 		newPath := strings.Join(newFile[:], "/")
 		log.Printf(newPath)
-	// 	comArgs := []string{newPath}
-	// 	comArgs = append(comArgs, output)
+		paths = append(paths, newPath)
 	// 	copyCom := exec.Command("cp", comArgs...)
 	// 	copyCom.Stdout = os.Stdout
 	// 	copyCom.Stderr = os.Stderr
