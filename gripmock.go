@@ -188,6 +188,8 @@ func delete_fisrt (s []string) []string {
     var r []string
     for index, str := range s {
         if index != 0 {
+			log.Printf(index)
+			log.Printf(str)
             r = append(r, str)
         }
     }
