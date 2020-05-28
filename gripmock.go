@@ -165,6 +165,7 @@ func generateProtoc(output string, param protocParam) []string {
 	// 		log.Fatal("Fail on sed")
 	// 	}
 	}
+	return paths
 }
 
 func buildServer(output string, protoPaths []string) {
