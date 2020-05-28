@@ -180,7 +180,7 @@ func generateProtoc(output string, param protocParam) []string {
     copyCom.Stderr = &stderr
 	err = copyCom.Run()
 	if err != nil {
-		log.Fatal("Fail on ")
+		log.Fatal(err)
 	}
 	fmt.Println("Directory contents : ", out.String())
 	pathsWithoutFirst := delete_fisrt(paths)
