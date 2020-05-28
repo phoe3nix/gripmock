@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"path/filepath"
 
 	"gitlab.cloud.vtblife.ru/vtblife/mobile/common/gripmock/stub"
 )
@@ -131,6 +132,7 @@ func generateProtoc(output string, param protocParam) {
 		
 		file := strings.Split(proto, "/")
 		newFile := make([]string, len(file) + 1)
+		condition := false
 		for i, s := range file {
 			if i == 1 {
 			  newFile[i] = "go"
@@ -141,20 +143,38 @@ func generateProtoc(output string, param protocParam) {
 			}
 			if i == 2 {
 			  newFile[i] = "src"
-			  newFile[i+1] = s
 			  continue
 			}
-			newFile[i+1] = s
+			if s == "vtblife" {
+				condition = true
+			}
+			if condition {
+				newFile[i+1] = s
+			}
 		}
 
 		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
-		newPath := strings.Join(newFile[:], "/")
-		comArgs := []string{newPath}
+		newPathWithoutEmpty := delete_empty(newFile)
+		newPath := strings.Join(newPathWithoutEmpty[:], "/")
+		comArgs := []string{"/"+newPath}
 		comArgs = append(comArgs, output)
 		copyCom := exec.Command("cp", comArgs...)
+		log.Println(newPath)
+		log.Println(output)
 		copyCom.Stdout = os.Stdout
 		copyCom.Stderr = os.Stderr
 		copyCom.Run()
+		err = filepath.Walk("/go/src/vtblife",
+    func(path string, info os.FileInfo, err error) error {
+    	if err != nil {
+        	return err
+    	}
+    	fmt.Println(path, info.Size())
+    	return nil
+	})
+	if err != nil {
+    	log.Println(err)
+	}
 		sed := exec.Command("sed", "-i", `s/^package \w*$/package main/`, param.output+protoname+".pb.go")
 		sed.Stderr = os.Stderr
 		sed.Stdout = os.Stdout
@@ -163,6 +183,16 @@ func generateProtoc(output string, param protocParam) {
 			log.Fatal("Fail on sed")
 		}
 	}
+}
+
+func delete_empty (s []string) []string {
+    var r []string
+    for _, str := range s {
+        if str != "" {
+            r = append(r, str)
+        }
+    }
+    return r
 }
 
 func buildServer(output string, protoPaths []string) {
