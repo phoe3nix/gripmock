@@ -198,7 +198,7 @@ func buildServer(output string, protoPaths []string) {
 	for index, path := range protoPaths {
 		if index == 0 {
 			fmt.Println(path)
-			args = append(args, "mortgage_service.pb.go")
+			args = append(args, "/go/src/mortgage_service.pb.go")
 		}
 		
 	}
