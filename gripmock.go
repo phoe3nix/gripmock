@@ -220,9 +220,10 @@ func delete_fisrt (s []string) []string {
 
 func buildServer(output string, protoPaths []string) {
 	args := []string{"build", "-o", output + "grpcserver", output + "server.go"}
-	for _, path := range protoPaths {
-		args = append(args, path)
-	}
+	// for _, path := range protoPaths {
+	// 	args = append(args, path)
+	// }
+	args = append(args, "/go/src/auth_flow_service.pb.go")
 	build := exec.Command("go", args...)
 	build.Stdout = os.Stdout
 	build.Stderr = os.Stderr
