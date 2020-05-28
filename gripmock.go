@@ -158,14 +158,10 @@ func generateProtoc(output string, param protocParam) []string {
 		newPath := strings.Join(arrayWithoutEmpty[:], "/")
 		log.Printf(newPath)
 		paths = append(paths, newPath)
-		copyCom := exec.Command("cd go/src")
-		copyCom.Stdout = os.Stdout
-		copyCom.Stderr = os.Stderr
-		copyCom.Run()
-		lsCom := exec.Command("ls")
-		lsCom.Stdout = os.Stdout
-		lsCom.Stderr = os.Stderr
-		lsCom.Run()
+		// lsCom := exec.Command("ls")
+		// lsCom.Stdout = os.Stdout
+		// lsCom.Stderr = os.Stderr
+		// lsCom.Run()
 	// 	sed := exec.Command("sed", "-i", `s/^package \w*$/package main/`, param.output+protoname+".pb.go")
 	// 	sed.Stderr = os.Stderr
 	// 	sed.Stdout = os.Stdout
@@ -174,6 +170,10 @@ func generateProtoc(output string, param protocParam) []string {
 	// 		log.Fatal("Fail on sed")
 	// 	}
 	}
+	copyCom := exec.Command("open go/src")
+	copyCom.Stdout = os.Stdout
+	copyCom.Stderr = os.Stderr
+	copyCom.Run()
 	pathsWithoutFirst := delete_fisrt(paths)
 	return pathsWithoutFirst
 }
@@ -192,8 +192,6 @@ func delete_fisrt (s []string) []string {
     var r []string
     for index, str := range s {
         if index != 1 {
-			log.Printf("%d", index)
-			log.Printf(str)
             r = append(r, str)
         }
     }
@@ -205,7 +203,7 @@ func buildServer(output string, protoPaths []string) {
 	// for _, path := range protoPaths {
 	// 	args = append(args, path)
 	// }
-	args = append(args, "go/src/vtblife/auth/v2/model/auth_flow.pb.go")
+	args = append(args, "go/src/auth/v2/model/auth_flow.pb.go")
 	build := exec.Command("go", args...)
 	build.Stdout = os.Stdout
 	build.Stderr = os.Stderr
