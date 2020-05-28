@@ -164,12 +164,12 @@ func generateProtoc(output string, param protocParam) {
 		copyCom.Stdout = os.Stdout
 		copyCom.Stderr = os.Stderr
 		copyCom.Run()
-		err = filepath.Walk("/go/src/vtblife",
+		err = filepath.Walk("/go/src/ru",
     func(path string, info os.FileInfo, err error) error {
     	if err != nil {
         	return err
     	}
-    	fmt.Println(path, info.Size())
+    	// fmt.Println(path, info.Size())
     	return nil
 	})
 	if err != nil {
@@ -197,8 +197,12 @@ func delete_empty (s []string) []string {
 
 func buildServer(output string, protoPaths []string) {
 	args := []string{"build", "-o", output + "grpcserver", output + "server.go"}
-	for _, path := range protoPaths {
-		args = append(args, output+getProtoName(path)+".pb.go")
+	for index, path := range protoPaths {
+		if index == 0 {
+			fmt.Println(path)
+			args = append(args, output+getProtoName(path)+".pb.go")
+		}
+		
 	}
 	build := exec.Command("go", args...)
 	build.Stdout = os.Stdout
