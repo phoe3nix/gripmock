@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	outputPointer := flag.String("o", "", "directory to output server.go. Default is $GOPATH/src/grpc/")
+	outputPointer := flag.String("o", "", "directory to output server.go. Default is $GOPATH/src/")
 	grpcPort := flag.String("grpc-port", "4770", "Port of gRPC tcp server")
 	grpcBindAddr := flag.String("grpc-listen", "", "Adress the gRPC server will bind to. Default to localhost, set to 0.0.0.0 to use from another machine")
 	adminport := flag.String("admin-port", "4771", "Port of stub admin server")
@@ -129,7 +129,6 @@ func generateProtoc(output string, param protocParam) []string {
 
 	// change package to "main" on generated code
 	for _, proto := range param.protoPath {
-		// protoname := getProtoName(proto)
 		
 		file := strings.Split(proto, "/")
 		newFile := make([]string, len(file) + 1)
@@ -144,7 +143,6 @@ func generateProtoc(output string, param protocParam) []string {
 			}
 			if i == 2 {
 			  newFile[i] = "src"
-			//   newFile[i+1] = s
 			  continue
 			}
 			if s == "vtblife" {
@@ -172,7 +170,8 @@ func generateProtoc(output string, param protocParam) []string {
 	// 		log.Fatal("Fail on sed")
 	// 	}
 	}
-	return paths
+	pathsWithoutFirst := delete_fisrt(paths)
+	return pathsWithoutFirst
 }
 
 func delete_empty (s []string) []string {
@@ -185,10 +184,19 @@ func delete_empty (s []string) []string {
     return r
 }
 
+func delete_fisrt (s []string) []string {
+    var r []string
+    for index, str := range s {
+        if index != 0 {
+            r = append(r, str)
+        }
+    }
+    return r
+}
+
 func buildServer(output string, protoPaths []string) {
 	args := []string{"build", "-o", output + "grpcserver", output + "server.go"}
 	for _, path := range protoPaths {
-		// log.Printf(output+getProtoName(path))
 		args = append(args, path)
 	}
 	build := exec.Command("go", args...)
