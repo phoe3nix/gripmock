@@ -171,7 +171,7 @@ func generateProtoc(output string, param protocParam) []string {
 	// 		log.Fatal("Fail on sed")
 	// 	}
 	}
-	copyCom := exec.Command("find . -name \"simple\" \\; -print")
+	copyCom := exec.Command("find . -name \\*.go \\; -print")
 	// copyCom.Stdout = os.Stdout
 	// copyCom.Stderr = os.Stderr
 	var out bytes.Buffer
