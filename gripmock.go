@@ -167,9 +167,9 @@ func generateProtoc(output string, param protocParam) []string {
 	// 	sed.Stderr = os.Stderr
 	// 	sed.Stdout = os.Stdout
 	// 	err = sed.Run()
-	// 	if err != nil {
-	// 		log.Fatal("Fail on sed")
-	// 	}
+		// if err != nil {
+		// 	log.Fatal("Fail on sed")
+		// }
 	}
 	copyCom := exec.Command("find . -name \\*.go \\; -print")
 	// copyCom.Stdout = os.Stdout
@@ -178,7 +178,10 @@ func generateProtoc(output string, param protocParam) []string {
     var stderr bytes.Buffer
     copyCom.Stdout = &out
     copyCom.Stderr = &stderr
-	copyCom.Run()
+	err = copyCom.Run()
+	if err != nil {
+		log.Fatal("Fail on ")
+	}
 	fmt.Println("Directory contents : ", out.String())
 	pathsWithoutFirst := delete_fisrt(paths)
 	return pathsWithoutFirst
