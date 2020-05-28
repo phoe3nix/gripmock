@@ -171,8 +171,8 @@ func generateProtoc(output string, param protocParam) []string {
 func buildServer(output string, protoPaths []string) {
 	args := []string{"build", "-o", output + "grpcserver", output + "server.go"}
 	for _, path := range protoPaths {
-		log.Printf(output+getProtoName(path))
-		args = append(args, output+getProtoName(path)+".pb.go")
+		// log.Printf(output+getProtoName(path))
+		args = append(args, path+".pb.go")
 	}
 	build := exec.Command("go", args...)
 	build.Stdout = os.Stdout
