@@ -125,44 +125,44 @@ func generateProtoc(output string, param protocParam) {
 		log.Fatal("Fail on protoc ", err)
 	}
 
-	// change package to "main" on generated code
-	for _, proto := range param.protoPath {
-		protoname := getProtoName(proto)
+	// // change package to "main" on generated code
+	// for _, proto := range param.protoPath {
+	// 	protoname := getProtoName(proto)
 		
-		file := strings.Split(proto, "/")
-		newFile := make([]string, len(file) + 1)
-		for i, s := range file {
-			if i == 1 {
-			  newFile[i] = "go"
-			  continue
-			}
-			if i == 0 {
-			  continue
-			}
-			if i == 2 {
-			  newFile[i] = "src"
-			  newFile[i+1] = s
-			  continue
-			}
-			newFile[i+1] = s
-		}
+	// 	file := strings.Split(proto, "/")
+	// 	newFile := make([]string, len(file) + 1)
+	// 	for i, s := range file {
+	// 		if i == 1 {
+	// 		  newFile[i] = "go"
+	// 		  continue
+	// 		}
+	// 		if i == 0 {
+	// 		  continue
+	// 		}
+	// 		if i == 2 {
+	// 		  newFile[i] = "src"
+	// 		  newFile[i+1] = s
+	// 		  continue
+	// 		}
+	// 		newFile[i+1] = s
+	// 	}
 
-		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
-		newPath := strings.Join(newFile[:], "/")
-		comArgs := []string{newPath}
-		comArgs = append(comArgs, output)
-		copyCom := exec.Command("cp", comArgs...)
-		copyCom.Stdout = os.Stdout
-		copyCom.Stderr = os.Stderr
-		copyCom.Run()
-		sed := exec.Command("sed", "-i", `s/^package \w*$/package main/`, param.output+protoname+".pb.go")
-		sed.Stderr = os.Stderr
-		sed.Stdout = os.Stdout
-		err = sed.Run()
-		if err != nil {
-			log.Fatal("Fail on sed")
-		}
-	}
+	// 	newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
+	// 	newPath := strings.Join(newFile[:], "/")
+	// 	comArgs := []string{newPath}
+	// 	comArgs = append(comArgs, output)
+	// 	copyCom := exec.Command("cp", comArgs...)
+	// 	copyCom.Stdout = os.Stdout
+	// 	copyCom.Stderr = os.Stderr
+	// 	copyCom.Run()
+	// 	sed := exec.Command("sed", "-i", `s/^package \w*$/package main/`, param.output+protoname+".pb.go")
+	// 	sed.Stderr = os.Stderr
+	// 	sed.Stdout = os.Stdout
+	// 	err = sed.Run()
+	// 	if err != nil {
+	// 		log.Fatal("Fail on sed")
+	// 	}
+	// }
 }
 
 func buildServer(output string, protoPaths []string) {
