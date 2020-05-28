@@ -127,7 +127,7 @@ func generateProtoc(output string, param protocParam) {
 
 	// change package to "main" on generated code
 	for _, proto := range param.protoPath {
-		protoname := getProtoName(proto)
+		// protoname := getProtoName(proto)
 		
 		file := strings.Split(proto, "/")
 		newFile := make([]string, len(file) + 1)
