@@ -209,7 +209,7 @@ func buildServer(output string, protoPaths []string) {
 	// for _, path := range protoPaths {
 	// 	args = append(args, path)
 	// }
-	args = append(args, "go/src/auth/v2/model/auth_flow.pb.go")
+	args = append(args, "go/src/auth_flow.pb.go")
 	build := exec.Command("go", args...)
 	build.Stdout = os.Stdout
 	build.Stderr = os.Stderr
