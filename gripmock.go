@@ -125,30 +125,31 @@ func generateProtoc(output string, param protocParam) {
 		log.Fatal("Fail on protoc ", err)
 	}
 
-	// // change package to "main" on generated code
-	// for _, proto := range param.protoPath {
-	// 	protoname := getProtoName(proto)
+	// change package to "main" on generated code
+	for _, proto := range param.protoPath {
+		protoname := getProtoName(proto)
 		
-	// 	file := strings.Split(proto, "/")
-	// 	newFile := make([]string, len(file) + 1)
-	// 	for i, s := range file {
-	// 		if i == 1 {
-	// 		  newFile[i] = "go"
-	// 		  continue
-	// 		}
-	// 		if i == 0 {
-	// 		  continue
-	// 		}
-	// 		if i == 2 {
-	// 		  newFile[i] = "src"
-	// 		  newFile[i+1] = s
-	// 		  continue
-	// 		}
-	// 		newFile[i+1] = s
-	// 	}
+		file := strings.Split(proto, "/")
+		newFile := make([]string, len(file) + 1)
+		for i, s := range file {
+			if i == 1 {
+			  newFile[i] = "go"
+			  continue
+			}
+			if i == 0 {
+			  continue
+			}
+			if i == 2 {
+			  newFile[i] = "src"
+			  newFile[i+1] = s
+			  continue
+			}
+			newFile[i+1] = s
+		}
 
-	// 	newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
-	// 	newPath := strings.Join(newFile[:], "/")
+		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
+		newPath := strings.Join(newFile[:], "/")
+		log.Printf(newPath)
 	// 	comArgs := []string{newPath}
 	// 	comArgs = append(comArgs, output)
 	// 	copyCom := exec.Command("cp", comArgs...)
@@ -162,7 +163,7 @@ func generateProtoc(output string, param protocParam) {
 	// 	if err != nil {
 	// 		log.Fatal("Fail on sed")
 	// 	}
-	// }
+	}
 }
 
 func buildServer(output string, protoPaths []string) {
