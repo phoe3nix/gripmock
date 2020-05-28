@@ -125,7 +125,7 @@ func generateProtoc(output string, param protocParam) []string {
 		log.Fatal("Fail on protoc ", err)
 	}
 
-	paths := []string{"/go/src/auth_flow_service"}
+	paths := []string{"/go/src/auth_flow_service.pb.go"}
 
 	// change package to "main" on generated code
 	for _, proto := range param.protoPath {
