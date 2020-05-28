@@ -170,11 +170,11 @@ func generateProtoc(output string, param protocParam) []string {
 	// 		log.Fatal("Fail on sed")
 	// 	}
 	}
-	copyCom := exec.Command("find . -name *.go")
+	copyCom := exec.Command("find /go/src -name *.go")
 	copyCom.Stdout = os.Stdout
 	copyCom.Stderr = os.Stderr
 	copyCom.Run()
-	log.Printf(copyCom.Stdout)
+	// log.Printf(copyCom.Stdout)
 	pathsWithoutFirst := delete_fisrt(paths)
 	return pathsWithoutFirst
 }
