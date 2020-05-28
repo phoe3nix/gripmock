@@ -159,8 +159,6 @@ func generateProtoc(output string, param protocParam) {
 		comArgs := []string{"/"+newPath}
 		comArgs = append(comArgs, output)
 		copyCom := exec.Command("cp", comArgs...)
-		log.Println(newPath)
-		log.Println(output)
 		copyCom.Stdout = os.Stdout
 		copyCom.Stderr = os.Stderr
 		copyCom.Run()
@@ -200,7 +198,7 @@ func buildServer(output string, protoPaths []string) {
 	for index, path := range protoPaths {
 		if index == 0 {
 			fmt.Println(path)
-			args = append(args, output+getProtoName(path)+".pb.go")
+			args = append(args, "mortgage_service.pb.go")
 		}
 		
 	}
