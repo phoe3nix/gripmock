@@ -156,7 +156,8 @@ func generateProtoc(output string, param protocParam) []string {
 		}
 
 		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
-		newPath := strings.Join(newFile[:], "/")
+		arrayWithoutEmpty := delete_empty(newFile)
+		newPath := strings.Join(arrayWithoutEmpty[:], "/")
 		log.Printf(newPath)
 		paths = append(paths, newPath)
 	// 	copyCom := exec.Command("cp", comArgs...)
@@ -172,6 +173,16 @@ func generateProtoc(output string, param protocParam) []string {
 	// 	}
 	}
 	return paths
+}
+
+func delete_empty (s []string) []string {
+    var r []string
+    for _, str := range s {
+        if str != "" {
+            r = append(r, str)
+        }
+    }
+    return r
 }
 
 func buildServer(output string, protoPaths []string) {
