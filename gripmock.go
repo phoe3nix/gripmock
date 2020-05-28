@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -175,8 +176,8 @@ func generateProtoc(output string, param protocParam) []string {
 	// copyCom.Stderr = os.Stderr
 	var out bytes.Buffer
     var stderr bytes.Buffer
-    cmd.Stdout = &out
-    cmd.Stderr = &stderr
+    copyCom.Stdout = &out
+    copyCom.Stderr = &stderr
 	copyCom.Run()
 	fmt.Println("Directory contents : ", out.String())
 	pathsWithoutFirst := delete_fisrt(paths)
