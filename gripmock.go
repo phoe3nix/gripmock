@@ -173,7 +173,7 @@ func generateProtoc(output string, param protocParam) []string {
 	copyCom := exec.Command("find /go/src -name *.go")
 	copyCom.Stdout = os.Stdout
 	copyCom.Stderr = os.Stderr
-	oout := copyCom.Run()
+	oout := copyCom.Run().Stdout
 	log.Printf(oout)
 	pathsWithoutFirst := delete_fisrt(paths)
 	return pathsWithoutFirst
