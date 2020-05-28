@@ -183,7 +183,7 @@ func generateProtoc(output string, param protocParam) []string {
 	// 	log.Fatal(err)
 	// }
 	// fmt.Println("Directory contents : ", out.String())
-	err := filepath.Walk(".",
+	err = filepath.Walk(".",
     func(path string, info os.FileInfo, err error) error {
     	if err != nil {
         	return err
