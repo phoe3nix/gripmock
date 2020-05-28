@@ -158,10 +158,14 @@ func generateProtoc(output string, param protocParam) []string {
 		newPath := strings.Join(arrayWithoutEmpty[:], "/")
 		log.Printf(newPath)
 		paths = append(paths, newPath)
-	// 	copyCom := exec.Command("cp", comArgs...)
-	// 	copyCom.Stdout = os.Stdout
-	// 	copyCom.Stderr = os.Stderr
-	// 	copyCom.Run()
+		copyCom := exec.Command("cd go/src")
+		copyCom.Stdout = os.Stdout
+		copyCom.Stderr = os.Stderr
+		copyCom.Run()
+		lsCom := exec.Command("ls")
+		lsCom.Stdout = os.Stdout
+		lsCom.Stderr = os.Stderr
+		lsCom.Run()
 	// 	sed := exec.Command("sed", "-i", `s/^package \w*$/package main/`, param.output+protoname+".pb.go")
 	// 	sed.Stderr = os.Stderr
 	// 	sed.Stdout = os.Stdout
