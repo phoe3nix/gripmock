@@ -142,10 +142,8 @@ func generateProtoc(output string, param protocParam) {
 			}
 			if i == 2 {
 			  newFile[i] = "src"
-			//   newFile[i+1] = s
 			  continue
 			}
-			// newFile[i+1] = s
 			if s == "vtblife" {
 				condition = true
 			}
@@ -155,8 +153,11 @@ func generateProtoc(output string, param protocParam) {
 		}
 
 		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
-		newPath := strings.Join(newFile[:], "/")
-		comArgs := []string{newPath}
+
+		newPathWithoutEmpty := delete_empty(newFile)
+		newPath := strings.Join(newPathWithoutEmpty[:], "/")
+		comArgs := []string{"/"+newPath}
+
 		comArgs = append(comArgs, output)
 		copyCom := exec.Command("cp", comArgs...)
 		copyCom.Stdout = os.Stdout
@@ -170,6 +171,16 @@ func generateProtoc(output string, param protocParam) {
 			log.Fatal("Fail on sed")
 		}
 	}
+}
+
+func delete_empty (s []string) []string {
+    var r []string
+    for _, str := range s {
+        if str != "" {
+            r = append(r, str)
+        }
+    }
+    return r
 }
 
 func buildServer(output string, protoPaths []string) {
