@@ -131,6 +131,7 @@ func generateProtoc(output string, param protocParam) {
 		
 		file := strings.Split(proto, "/")
 		newFile := make([]string, len(file) + 1)
+		condition := false
 		for i, s := range file {
 			if i == 1 {
 			  newFile[i] = "go"
@@ -141,10 +142,16 @@ func generateProtoc(output string, param protocParam) {
 			}
 			if i == 2 {
 			  newFile[i] = "src"
-			  newFile[i+1] = s
+			//   newFile[i+1] = s
 			  continue
 			}
-			newFile[i+1] = s
+			// newFile[i+1] = s
+			if s == "vtblife" {
+				condition = true
+			}
+			if condition {
+				newFile[i+1] = s
+			}
 		}
 
 		newFile[len(file)] = getProtoName(newFile[len(file)]) + ".pb.go"
