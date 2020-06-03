@@ -11,7 +11,6 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/mitchellh/mapstructure"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -178,9 +177,7 @@ func findStub(service, method string, in, out interface{}) error {
 		return fmt.Errorf(respRPC.Error)
 	}
 
-	fmt.Println("Начинаем декодирование")
-	decodeResp := mapstructure.Decode(respRPC.Data, out)
-	fmt.Println("Закончено декодирование")
-	return decodeResp
+	data, _ := json.Marshal(respRPC.Data)
+ 	return json.Unmarshal(data, out)
 }
 {{ end }}
