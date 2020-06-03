@@ -178,6 +178,9 @@ func findStub(service, method string, in, out interface{}) error {
 		return fmt.Errorf(respRPC.Error)
 	}
 
-	return mapstructure.Decode(respRPC.Data, out)
+	fmt.Println("Начинаем декодирование")
+	decodeResp := mapstructure.Decode(respRPC.Data, out)
+	fmt.Println("Закончено декодирование")
+	return decodeResp
 }
 {{ end }}
