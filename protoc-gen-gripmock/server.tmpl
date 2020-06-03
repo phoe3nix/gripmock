@@ -170,6 +170,7 @@ func findStub(service, method string, in, out interface{}) error {
 	respRPC := new(response)
 	err = json.NewDecoder(resp.Body).Decode(respRPC)
 	if err != nil {
+		fmt.Println(respRPC)
 		return fmt.Errorf("decoding json response %v",err)
 	}
 
