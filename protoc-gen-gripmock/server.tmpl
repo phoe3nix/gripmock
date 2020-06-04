@@ -14,6 +14,8 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
 )
 {{ range $package, $alias := .Dependencies }}
 import {{$alias}} "{{$package}}"
@@ -70,7 +72,9 @@ type {{.Name}} struct{}
 {{ define "standard_method" }}
 func (s *{{.ServiceName}}) {{.Name}}(ctx context.Context, in *{{.Input}}) (*{{.Output}},error){
 	out := &{{.Output}}{}
-	err := findStub("{{.ServiceName}}", "{{.Name}}", in, out)
+	data, err := findStub("{{.ServiceName}}", "{{.Name}}", in, out)
+	err = jsonpb.Unmarshal(strings.NewReader(string(data)), out)
+	fmt.Printf("%+v\n", proto.MarshalTextString(out))
 	return out, err
 }
 {{ end }}
@@ -144,40 +148,42 @@ type response struct {
 	Error string      `json:"error"`
 }
 
-func findStub(service, method string, in, out interface{}) error {
+func findStub(service, method string, in, out interface{}) ([]byte,error) {
 	url := fmt.Sprintf("http://localhost%s/find", HTTP_PORT)
 	pyl := payload{
 		Service: service,
 		Method:  method,
 		Data:    in,
 	}
+
 	byt, err := json.Marshal(pyl)
 	if err != nil {
-		return err
+		return byt, err
 	}
 	reader := bytes.NewReader(byt)
 	resp, err := http.DefaultClient.Post(url, "application/json", reader)
 	if err != nil {
-		return fmt.Errorf("Error request to stub server %v",err)
+		return byt, fmt.Errorf("Error request to stub server %v",err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf(string(body))
+		return byt, fmt.Errorf(string(body))
 	}
 
 	respRPC := new(response)
 	err = json.NewDecoder(resp.Body).Decode(respRPC)
 	if err != nil {
 		fmt.Println(respRPC)
-		return fmt.Errorf("decoding json response %v",err)
+		return byt, fmt.Errorf("decoding json response %v",err)
 	}
 
 	if respRPC.Error != "" {
-		return fmt.Errorf(respRPC.Error)
+		return byt, fmt.Errorf(respRPC.Error)
 	}
 
 	data, _ := json.Marshal(respRPC.Data)
- 	return json.Unmarshal(data, out)
+
+	return data, err
 }
 {{ end }}
