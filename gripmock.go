@@ -144,7 +144,7 @@ func generateProtoc(output string, param protocParam) {
 			  newFile[i] = "src"
 			  continue
 			}
-			if s == "proto" || s == "ru" {
+			if s == "proto" {
 				condition = true
 				continue
 			}
