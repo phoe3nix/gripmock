@@ -144,8 +144,9 @@ func generateProtoc(output string, param protocParam) {
 			  newFile[i] = "src"
 			  continue
 			}
-			if s == "vtblife" {
+			if s == "proto" {
 				condition = true
+				continue
 			}
 			if condition {
 				newFile[i+1] = s
