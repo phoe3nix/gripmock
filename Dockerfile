@@ -39,7 +39,7 @@ RUN go get -u -v github.com/gobuffalo/packr/v2/... \
 # cloning well-known-types
 RUN git clone https://github.com/google/protobuf.git /protobuf-repo
 
-RUN git clone git@gitlab.cloud.vtblife.ru:vtblife/mobile/common/gripmock.git /master
+RUN git clone git@gitlab.cloud.vtblife.ru:vtblife/mobile/common/gripmock.git /search_api
 
 RUN mkdir protobuf
 
