@@ -173,6 +173,9 @@ func contains(expect, actual map[string]interface{}) bool {
 		}
 
 		if !reflect.DeepEqual(val, actualvalue) {
+			fmt.Printf(key)
+			fmt.Printf(val)
+			fmt.Printf(actualvalue)
 			return false
 		}
 	}
