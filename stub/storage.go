@@ -168,6 +168,7 @@ func contains(expect, actual map[string]interface{}) bool {
 	for key, val := range expect {
 		actualvalue, ok := actual[key]
 		if !ok {
+			fmt.Printf(key)
 			return ok
 		}
 
