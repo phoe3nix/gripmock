@@ -11,17 +11,18 @@ GripMock has 2 main components:
 Matched stub will be returned to GRPC service then further parse it to response the rpc call.
 
 ## Quick Usage
-First, prepare your `.proto` file. or you can use `hello.proto` in `example/pb/` folder. Suppose you put it in `/mypath/hello.proto`. We gonna use Docker image for easier example test.
-basic syntax to run GripMock is 
-`gripmock <protofile>`
-
-- Install [Docker](https://docs.docker.com/install/)
-- Run `docker pull tkpd/gripmock` to pull the image
-- We gonna mount `/mypath/hello.proto` (it must a fullpath) into container and also we expose ports needed. Run `docker run -p 4770:4770 -p 4771:4771 -v /mypath:/proto tkpd/gripmock /proto/hello.proto`
-- On separate terminal we gonna add stub into stub service. Run `curl -X POST -d '{"service":"Greeter","method":"SayHello","input":{"equals":{"name":"gripmock"}},"output":{"data":{"message":"Hello GripMock"}}}' localhost:4771/add `
-- Now we are ready to test it with our client. you can find client example file under `example/client/`. Execute one of your preferred language. Example for go: `go run example/client/go/*.go`
-
+ - Установить докер [Docker](https://docs.docker.com/install/)
+ - Склонируйте этот репозиторий. В корне находится скрипт build.sh. Запустите его командой `sh build.sh latest`.
+	Данная команда соберет вам контейнер, который в дальнейшем можно будет 	использовать. 
+- В корне также находится ещё один скрипт, который уже запускает локальный мок сервер. Но для его коректной работы необходимо перенести прото файлы в отдельную папку и немного их изменить. После этого в скрипте нужно указать путь до вашей папки, вместо  `/Users/mobile-ci/Desktop/proto_server`
 Check [`example`](https://github.com/tokopedia/gripmock/tree/master/example) folder for various usecase of gripmock.
+
+##  Прото файлы.
+- Создайте любую папку, в которой будут храниться ваши прото файлы. 
+- Внутри создаем три папки: `Auth`, `MortgageBroker`, `SharedSubmodules`. 
+- для iOS: идём в директорию проекта realty-ecosystem. Заходим в папки Auth и MortgageBroker. Из каждой из них копируем папку Submodules и переносим её внутрь соответсвующих папок. Что касается SharedSubmodules, то просто копируем содержимое и переносим. Должно получится следующее: Auth содержит папку Submodules, Submodules содержит auth-api, otp-api. Каждая из них содержит некоторое количество файлов и папок. Всё это можно удалить, кроме папки proto.
+- для Android: Те же самые шаги, только берем нужные папки из репозиториев сервисов.
+- Для того чтобы сервер запустился, необходимо изменение в некоторых протофайлах. Заходим в  `~/proto_server/MortgageBroker/Submodules/mortgage-api/proto/ru/vtblife/mortgage/v1/banks/model/banks_mortgage_offers.proto`. В нём заменяем message `MortgageOffer`  на `BankMortgageOffer` и заменяем тип переменных в этой файле на новый. Далее идём в `~/proto_server/MortgageBroker/Submodules/mortgage-api/proto/ru/vtblife/mortgage/v1/model/mortgage.proto` и удаляем строчку `import "ru/vtblife/mortgage/v1/banks/model/banks_mortgage_offers.proto";`, а так же строчку `vtblife.mortgage.v1.banks.model.Bank bank = 1;`. Всё, вы превосходны, можно запускать сервер и прогонять UI тесты. 
 
 ## Stubbing
 
