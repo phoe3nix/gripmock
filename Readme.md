@@ -15,7 +15,6 @@ Matched stub will be returned to GRPC service then further parse it to response 
  - Склонируйте этот репозиторий. В корне находится скрипт build.sh. Запустите его командой `sh build.sh latest`.
 	Данная команда соберет вам контейнер, который в дальнейшем можно будет 	использовать. 
 - В корне также находится ещё один скрипт, который уже запускает локальный мок сервер. Но для его коректной работы необходимо перенести прото файлы в отдельную папку и немного их изменить. После этого в скрипте нужно указать путь до вашей папки, вместо  `/Users/mobile-ci/Desktop/proto_server`
-Check [`example`](https://github.com/tokopedia/gripmock/tree/master/example) folder for various usecase of gripmock.
 
 ##  Прото файлы.
 - Создайте любую папку, в которой будут храниться ваши прото файлы. 
