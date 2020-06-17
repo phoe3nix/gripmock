@@ -28,7 +28,7 @@ func RunStubServer(opt Options) {
 	r.Post("/add", addStub)
 	r.Get("/", listStub)
 	r.Post("/find", handleFindStub)
-	r.Get("/clear", handleClearStub)
+	r.Post("/clear", handleClearStub)
 
 	if opt.StubPath != "" {
 		readStubFromFile(opt.StubPath)
@@ -49,6 +49,7 @@ func responseError(err error, w http.ResponseWriter) {
 type Stub struct {
 	Service string `json:"service"`
 	Method  string `json:"method"`
+	Meta	Meta   `json:"meta"`
 	Input   Input  `json:"input"`
 	Output  Output `json:"output"`
 }
@@ -62,6 +63,11 @@ type Input struct {
 type Output struct {
 	Data  map[string]interface{} `json:"data"`
 	Error string                 `json:"error"`
+}
+
+type Meta struct {
+	TestName 	string `json:"testName"`
+	DeviceName	string `json:"deviceName"`
 }
 
 func addStub(w http.ResponseWriter, r *http.Request) {
@@ -106,6 +112,14 @@ func validateStub(stub *Stub) error {
 	if stub.Method == "" {
 		return fmt.Errorf("Method name can't be emtpy")
 	}
+
+	if stub.Meta.TestName == "" {
+		return fmt.Errorf("Meta information about TestName can't be emtpy")
+	}
+
+	if stub.Meta.DeviceName == "" {
+		return fmt.Errorf("Meta information about DeviceName can't be emtpy")
+	}
 	
 	// due to golang implementation
 	// method name must capital
@@ -133,6 +147,7 @@ func validateStub(stub *Stub) error {
 type findStubPayload struct {
 	Service string                 `json:"service"`
 	Method  string                 `json:"method"`
+	Meta	Meta				   `json:"meta"`
 	Data    map[string]interface{} `json:"data"`
 }
 
@@ -160,6 +175,12 @@ func handleFindStub(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleClearStub(w http.ResponseWriter, r *http.Request) {
-	clearStorage()
+	meta := new(Meta)
+	err := json.NewDecoder(r.Body).Decode(meta)
+	if err != nil {
+		responseError(err, w)
+		return
+	}
+	clearStorage(meta)
 	w.Write([]byte("OK"))
 }

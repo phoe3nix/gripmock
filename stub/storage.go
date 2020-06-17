@@ -21,6 +21,7 @@ var stubStorage = stubMapping{}
 
 type storage struct {
 	Input  Input
+	Meta   Meta
 	Output Output
 }
 
@@ -30,6 +31,7 @@ func storeStub(stub *Stub) error {
 
 	strg := storage{
 		Input:  stub.Input,
+		Meta:	stub.Meta,
 		Output: stub.Output,
 	}
 	if stubStorage[stub.Service] == nil {
@@ -71,6 +73,9 @@ func findStub(stub *findStubPayload) (*Output, error) {
 		if expect := stubrange.Input.Equals; expect != nil {
 			closestMatch = append(closestMatch, closeMatch{"equals", expect})
 			if equals(stub.Data, expect) {
+				if !metaEquals(stub.Meta, stubrange.Meta) {
+					continue
+				}
 				return &stubrange.Output, nil
 			}
 		}
@@ -78,6 +83,9 @@ func findStub(stub *findStubPayload) (*Output, error) {
 		if expect := stubrange.Input.Contains; expect != nil {
 			closestMatch = append(closestMatch, closeMatch{"contains", expect})
 			if contains(stubrange.Input.Contains, stub.Data) {
+				if !metaEquals(stub.Meta, stubrange.Meta) {
+					continue
+				}
 				return &stubrange.Output, nil
 			}
 		}
@@ -85,6 +93,9 @@ func findStub(stub *findStubPayload) (*Output, error) {
 		if expect := stubrange.Input.Matches; expect != nil {
 			closestMatch = append(closestMatch, closeMatch{"matches", expect})
 			if matches(stubrange.Input.Matches, stub.Data) {
+				if !metaEquals(stub.Meta, stubrange.Meta) {
+					continue
+				}
 				return &stubrange.Output, nil
 			}
 		}
@@ -164,6 +175,10 @@ func equals(input1, input2 map[string]interface{}) bool {
 	return reflect.DeepEqual(input1, input2)
 }
 
+func metaEquals(input1, input2 Meta) bool {
+	return reflect.DeepEqual(input1, input2)
+}
+
 func contains(expect, actual map[string]interface{}) bool {
 	for key, val := range expect {
 		actualvalue, ok := actual[key]
@@ -201,11 +216,39 @@ func matches(expect, actual map[string]interface{}) bool {
 	return true
 }
 
-func clearStorage() {
+func clearStorage(meta *Meta) {
 	mx.Lock()
 	defer mx.Unlock()
 
-	stubStorage = stubMapping{}
+	// newStubStorage := stubStorage
+	newStubStorage := stubMapping{}
+
+	for serviceKey, serviceValue := range stubStorage {
+		for methodKey, _ := range serviceValue {
+			storageStubs := stubStorage[serviceKey][methodKey]
+			for _, storageStub := range storageStubs {
+				// if metaEquals(storageStub.Meta, *meta) {
+					// log.Printf("%v\n", index)
+					// log.Printf("%v\n", storageStubs)
+					// storageAfterRemove := removeIndex(newStubStorage[serviceKey][methodKey], index)
+					// newStubStorage[serviceKey][methodKey] = storageAfterRemove
+					// removeIndex(newStubStorage[serviceKey][methodKey], index)
+				// }
+				if !metaEquals(storageStub.Meta, *meta) {
+					if newStubStorage[serviceKey] == nil {
+						newStubStorage[serviceKey] = make(map[string][]storage)
+					}
+					newStubStorage[serviceKey][methodKey] = append(newStubStorage[serviceKey][methodKey], storageStub)
+				}
+			}
+		}
+	}
+
+	stubStorage = newStubStorage
+}
+
+func removeIndex(s []storage, index int) []storage {
+    return append(s[:index], s[index+1:]...)
 }
 
 func readStubFromFile(path string) {
